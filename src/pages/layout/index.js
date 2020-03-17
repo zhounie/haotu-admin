@@ -1,36 +1,23 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Breadcrumb } from 'antd'
-import SubMenu from 'antd/lib/menu/SubMenu';
+import { Layout, Breadcrumb } from 'antd'
+import MenuComponent from './menu'
 
 const { Header, Content, Footer, Sider } = Layout
-const { SUbMenu } = Menu
 
-function AdminIndex () {
+
+function AdminIndex (props) {
     const [collapsed, setCollapsed] = useState(false)
     const onCollapse = (collapsed) => {
         setCollapsed(collapsed)
     }
+    
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider collapsible collapsed={collapsed} onCollapse={onCollapse} >
-                <div className="logo"></div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                    <Menu.Item key="1">
-                        <span>工作台</span>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <span>添加文章</span>
-                    </Menu.Item>
-                    <SubMenu key="sub1" title={
-                        <span>
-                            文章管理
-                        </span>
-                    }>
-                        <Menu.Item key="3">
-                            <span>文章列表</span>
-                        </Menu.Item>
-                    </SubMenu>
-                </Menu>
+                {/* <div className="logo">
+                    <img src={} />
+                </div> */}
+                <MenuComponent />
             </Sider>
             <Layout>
                 <Header style={{background: '#fff', padding: 0}}></Header>
@@ -40,7 +27,7 @@ function AdminIndex () {
                         <Breadcrumb.Item>工作台</Breadcrumb.Item>
                     </Breadcrumb>
                     <div style={{padding: 24, background: '#fff', minHeight: 360}}>
-                    博客工作台.
+                        {props.children}
                     </div>
                 </Content>
                 <Footer style={{textAlign: 'center'}}>JOSNLFFJL</Footer>
