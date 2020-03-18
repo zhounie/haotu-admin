@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from '../../components/table'
 import { getUserList } from '../../api'
+
+import { Button, Modal, Form, Input, Checkbox } from 'antd';
+
 
 const columns = [
     {
@@ -54,17 +57,76 @@ const data = [
         tags: ['cool', 'teacher'],
     },
 ];
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 16 },
+};
 
+
+const onFinish = values => {
+  console.log('Success:', values);
+};
+
+const onFinishFailed = errorInfo => {
+  console.log('Failed:', errorInfo);
+};
 
 function User() {
+    const [visible, setVisible] = useState(true)
     useEffect(() => {
       getUserList().then(res=> {
         console.log(res)
       })
     })
+
+    let showModal = () => {
+      setVisible(true)
+    };
+    
+    let handleOk = e => {
+      setVisible(false)
+    };
+    
+    let handleCancel = e => {
+      setVisible(false)
+    };
+
     return (
         <>
-            <Table columns={columns} data={data} />
+          <Button type="primary" onClick={showModal}>添加</Button>
+
+          <Modal
+            title="添加用户"
+            visible={visible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+              <Form
+                {...layout}
+                name="basic"
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+              >
+                <Form.Item
+                  label="Username"
+                  name="username"
+                  rules={[{ required: true, message: 'Please input your username!' }]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  label="Password"
+                  name="password"
+                  rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                  <Input.Password />
+                </Form.Item>
+              </Form>
+          </Modal>
+
+          <Table columns={columns} data={data} />
         </>
     )
 }
