@@ -1,10 +1,7 @@
 import { TITLE } from './types'
 
-import { combineReducers } from 'redux'
+import { initState } from './state'
 
-const initState = {
-    title: ''
-}
 
 const setTitle = (state = initState, action = {}) => {
     switch(action.type) {
@@ -16,6 +13,4 @@ const setTitle = (state = initState, action = {}) => {
 }
 
 
-export const reducer = combineReducers({
-    setTitle
-})
+export default setTitle

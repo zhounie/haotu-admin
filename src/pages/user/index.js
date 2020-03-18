@@ -5,7 +5,7 @@ import { getUserList } from '../../api'
 import { Button, Modal, Form, Input, Checkbox } from 'antd';
 
 import { useSelector, useDispatch } from 'react-redux'
-
+import { TITLE } from '../../store/types'
 
 const columns = [
     {
@@ -61,7 +61,7 @@ const data = [
 ];
 const layout = {
   labelCol: { span: 6 },
-  wrapperCol: { span: 16 },
+  wrapperCol: { span: 1126 },
 };
 
 
@@ -75,9 +75,13 @@ const onFinishFailed = errorInfo => {
 
 function User() {
     const [visible, setVisible] = useState(true)
-    // const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
     useEffect(() => {
+      dispatch({
+        type: TITLE,
+        title: '哈哈哈'
+      })
       getUserList().then(res=> {
         console.log(res)
       })
