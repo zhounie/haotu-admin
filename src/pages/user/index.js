@@ -4,6 +4,8 @@ import { getUserList } from '../../api'
 
 import { Button, Modal, Form, Input, Checkbox } from 'antd';
 
+import { useSelector, useDispatch } from 'react-redux'
+
 
 const columns = [
     {
@@ -73,11 +75,16 @@ const onFinishFailed = errorInfo => {
 
 function User() {
     const [visible, setVisible] = useState(true)
+    // const dispatch = useDispatch()
+
     useEffect(() => {
       getUserList().then(res=> {
         console.log(res)
       })
     })
+    useSelector(state => {
+      console.log(state);
+    });
 
     let showModal = () => {
       setVisible(true)
