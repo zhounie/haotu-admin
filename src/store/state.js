@@ -1,3 +1,4 @@
 export const initState = {
-    title: ''
+    title: '',
+    state: false
 }

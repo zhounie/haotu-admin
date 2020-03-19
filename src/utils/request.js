@@ -6,7 +6,7 @@ export const POST = (url, params) => {
         axios.post(url, {
             ...params
         }).then(res => {
-            resolve(res)
+            resolve(res.data)
         }).catch(error => {
             reject(error)
         })
@@ -20,7 +20,7 @@ export const GET = (url, params) => {
             axios.get(url, {
                 ...params
             }).then(res => {
-                resolve(res)
+                resolve(res.data)
             }).catch(error => {
                 reject(error)
             })

@@ -1,143 +1,101 @@
 import React, { useEffect, useState } from 'react';
-import Table from '../../components/table'
-import { getUserList } from '../../api'
-
-import { Button, Modal, Form, Input, Checkbox } from 'antd';
-
 import { useSelector, useDispatch } from 'react-redux'
-import { TITLE } from '../../store/types'
 
-const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <a>{text}</a>,
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (text, record) => (
-        <span>
-          <a style={{ marginRight: 16 }}>Invite {record.name}</a>
-          <a>Delete</a>
-        </span>
-      ),
-    },
-  ];
-  
-const data = [
-    {
-        key: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-    },
-    {
-        key: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-    },
-    {
-        key: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-    },
-];
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 1126 },
-};
+import Table from '../../components/table'
+import { getUserList, addUser, editUser } from '../../api'
 
+import { Button } from 'antd';
 
-const onFinish = values => {
-  console.log('Success:', values);
-};
+import { TITLE, STATE } from '../../store/types'
 
-const onFinishFailed = errorInfo => {
-  console.log('Failed:', errorInfo);
-};
+import Add from './add'
+
 
 function User() {
-    const [visible, setVisible] = useState(true)
+    const [visible, setVisible] = useState(false)
+    const [isEdit, setIsEdit] = useState(false)
+    const [tableData, setTableData] = useState([])
+    const [initValue, setInitValue] = useState({})
     const dispatch = useDispatch()
 
     useEffect(() => {
-      dispatch({
-        type: TITLE,
-        title: '哈哈哈'
-      })
-      getUserList().then(res=> {
-        console.log(res)
-      })
-    })
-    useSelector(state => {
-      console.log(state);
-    });
+      getUsers()
+    }, [])
 
-    let showModal = () => {
+    const columns = [
+      {
+        title: '用户账号',
+        dataIndex: 'username',
+        key: 'username'
+      },
+      {
+        title: '用户昵称',
+        dataIndex: 'nickname',
+        key: 'nickname',
+      },
+      {
+        title: '邮箱',
+        dataIndex: 'email',
+        key: 'email',
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <span>
+            <a style={{ marginRight: 16 }} onClick={() => onEditData(record)}>编辑</a>
+            <a>删除</a>
+          </span>
+        ),
+      }
+    ];
+    
+    let onEditData = (row) => {
+      setInitValue(row)     
+      setIsEdit(true)
       setVisible(true)
-    };
-    
-    let handleOk = e => {
-      setVisible(false)
-    };
-    
-    let handleCancel = e => {
-      setVisible(false)
-    };
+    }
 
+    let getUsers = () => {
+      getUserList().then(res=> {
+        setTableData(res.data)
+      })
+    }
+
+    let state = useSelector(state => state.state)
+    let showModal = () => {
+      setIsEdit(false)
+      setVisible(true)
+      setInitValue({})
+    };
+    let closeModal = () => {
+      setVisible(false)
+    }
+    let handleState = () => {
+      dispatch({ type: STATE, data: !state })
+    }
+    let confirm = (data) => {
+      if (isEdit) {
+        editUser(data).then(res=>{
+          if (res.code === 200) {
+            getUsers()
+            closeModal()
+          }
+        })
+      } else {
+        addUser(data).then(res=>{
+          if (res.code === 200) {
+            getUsers()
+            closeModal()
+          }
+        })
+      }
+    }
     return (
         <>
           <Button type="primary" onClick={showModal}>添加</Button>
-
-          <Modal
-            title="添加用户"
-            visible={visible}
-            onOk={handleOk}
-            onCancel={handleCancel}
-          >
-              <Form
-                {...layout}
-                name="basic"
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-              >
-                <Form.Item
-                  label="Username"
-                  name="username"
-                  rules={[{ required: true, message: 'Please input your username!' }]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                  <Input.Password />
-                </Form.Item>
-              </Form>
-          </Modal>
-
-          <Table columns={columns} data={data} />
+          <Add initValue={initValue} visible={visible} closeModal={closeModal} confirm={confirm}/>
+          <Table columns={columns} data={tableData} />
         </>
     )
 }
