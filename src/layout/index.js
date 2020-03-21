@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Layout, Breadcrumb } from 'antd'
 import MenuComponent from './menu'
+import { Router, Switch, Route, Redirect } from 'react-router-dom'
 
 const { Header, Content, Footer, Sider } = Layout
+
 
 
 function AdminIndex (props) {
